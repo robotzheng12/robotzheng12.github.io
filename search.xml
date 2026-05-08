@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hermes Agent 安装使用手册</title>
+    <url>/2026/05/05/2026-05-05-hermes-agent-installation-guide/</url>
+    <content><![CDATA[<p>Hermes Agent 是由 Nous Research 开发的开源自主 AI 智能体，具备持久记忆、自改进学习能力和 40+ 内置工具，支持 CLI 及 Telegram、Discord、飞书、微信等 15+ 平台接入。本文档旨在帮助您快速完成安装部署并掌握日常使用方法。</p>
+<h2 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h2><h3 id="1-1-什么是-Hermes-Agent？"><a href="#1-1-什么是-Hermes-Agent？" class="headerlink" title="1.1 什么是 Hermes Agent？"></a>1.1 什么是 Hermes Agent？</h3><p>Hermes Agent（项目标志 ☤）是开源自主 AI 智能体框架，遵循 MIT 协议。与普通聊天机器人不同，它是一个能持久运行、跨会话保留记忆、并从每次任务中学习改进的 AI 系统。核心能力包括：</p>
+<ul>
+<li><strong>自改进学习循环</strong>：完成任务后自动提炼流程生成可复用技能</li>
+<li><strong>持久化记忆</strong>：通过 MEMORY.md、USER.md 跨会话保存用户偏好与上下文</li>
+<li><strong>多工具调用</strong>：内置 40+ 工具，支持终端执行、文件读写、浏览器自动化等</li>
+<li><strong>多平台接入</strong>：统一网关接入 Telegram、Discord、飞书、微信等主流平台</li>
+</ul>
+<h3 id="1-2-系统要求"><a href="#1-2-系统要求" class="headerlink" title="1.2 系统要求"></a>1.2 系统要求</h3><blockquote>
+<p><strong>注意</strong>：Hermes Agent 要求大模型的上下文窗口至少为 64K，以维持足够的工作记忆。</p>
+</blockquote>
+<h2 id="二、快速开始"><a href="#二、快速开始" class="headerlink" title="二、快速开始"></a>二、快速开始</h2><h3 id="2-1-一键安装（推荐）"><a href="#2-1-一键安装（推荐）" class="headerlink" title="2.1 一键安装（推荐）"></a>2.1 一键安装（推荐）</h3><p>在终端执行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash</span><br></pre></td></tr></table></figure>
+
+<p>安装过程约 3-5 分钟，脚本自动完成 Python 依赖安装、虚拟环境配置及 PATH 设置。</p>
+<h3 id="2-2-验证安装"><a href="#2-2-验证安装" class="headerlink" title="2.2 验证安装"></a>2.2 验证安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hermes --version</span><br></pre></td></tr></table></figure>
+
+<p>预期输出：<code>hermes v0.8.0</code>（版本号可能随更新变化）。</p>
+<h3 id="2-3-首次配置"><a href="#2-3-首次配置" class="headerlink" title="2.3 首次配置"></a>2.3 首次配置</h3><p>安装完成后，运行配置向导：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hermes setup</span><br></pre></td></tr></table></figure>
+
+<p>向导将依次引导您完成：</p>
+<ul>
+<li>LLM 提供商选择（OpenAI、Anthropic、阿里云百炼、Ollama 等）</li>
+<li>API Key 配置</li>
+<li>工具启用</li>
+<li>消息网关配置（可选）</li>
+</ul>
+<p>新手可直接选择 Quick setup 快速完成基础配置。</p>
+<h3 id="2-4-启动-Hermes-Agent"><a href="#2-4-启动-Hermes-Agent" class="headerlink" title="2.4 启动 Hermes Agent"></a>2.4 启动 Hermes Agent</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hermes</span><br></pre></td></tr></table></figure>
+
+<p>成功启动后即可在命令行中与 AI 智能体对话。</p>
+<h2 id="三、核心配置"><a href="#三、核心配置" class="headerlink" title="三、核心配置"></a>三、核心配置</h2><h3 id="3-1-LLM-模型配置"><a href="#3-1-LLM-模型配置" class="headerlink" title="3.1 LLM 模型配置"></a>3.1 LLM 模型配置</h3><p>切换大模型：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hermes model</span><br></pre></td></tr></table></figure>
+
+<p>按提示选择 Provider 并输入 API Key。支持的 Provider 包括 OpenAI、Anthropic、阿里云百炼、MiniMax、智谱 GLM、Kimi K2.5 等主流模型服务商。</p>
+<h3 id="3-2-工具配置"><a href="#3-2-工具配置" class="headerlink" title="3.2 工具配置"></a>3.2 工具配置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hermes tools</span><br></pre></td></tr></table></figure>
+
+<p>启用或禁用内置工具模块，包括文件操作、Shell 执行、网络请求、浏览器控制等。</p>
+<h3 id="3-3-消息网关配置"><a href="#3-3-消息网关配置" class="headerlink" title="3.3 消息网关配置"></a>3.3 消息网关配置</h3><p>将 Agent 接入 IM 平台：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hermes gateway setup</span><br></pre></td></tr></table></figure>
+
+<p>选择目标平台（飞书、Telegram、Discord、Slack、微信等），按提示填写对应凭证即可完成接入。</p>
+<h3 id="3-4-单项配置修改"><a href="#3-4-单项配置修改" class="headerlink" title="3.4 单项配置修改"></a>3.4 单项配置修改</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看当前配置</span></span><br><span class="line">hermes config list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改单项配置</span></span><br><span class="line">hermes config <span class="built_in">set</span> &lt;key&gt; &lt;value&gt;</span><br></pre></td></tr></table></figure>
+
+<p>配置文件默认存储在 <code>~/.hermes/config.yaml</code>。</p>
+<h2 id="四、使用指南"><a href="#四、使用指南" class="headerlink" title="四、使用指南"></a>四、使用指南</h2><h3 id="4-1-基础对话"><a href="#4-1-基础对话" class="headerlink" title="4.1 基础对话"></a>4.1 基础对话</h3><p>启动 Hermes Agent 后直接输入自然语言指令即可，例如：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">请帮我搜索最新的 AI 新闻并整理成摘要</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-定时任务（Cron-调度）"><a href="#4-2-定时任务（Cron-调度）" class="headerlink" title="4.2 定时任务（Cron 调度）"></a>4.2 定时任务（Cron 调度）</h3><p>Hermes Agent 内置调度器，支持用自然语言定义定时任务：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hermes schedule <span class="string">&quot;每天早上 8 点，汇总我的邮件并发送到 Telegram&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-常用命令速查"><a href="#4-3-常用命令速查" class="headerlink" title="4.3 常用命令速查"></a>4.3 常用命令速查</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>hermes</code></td>
+<td>启动 CLI 交互模式</td>
+</tr>
+<tr>
+<td><code>hermes setup</code></td>
+<td>运行配置向导</td>
+</tr>
+<tr>
+<td><code>hermes model</code></td>
+<td>切换 LLM 模型</td>
+</tr>
+<tr>
+<td><code>hermes tools</code></td>
+<td>工具配置管理</td>
+</tr>
+<tr>
+<td><code>hermes gateway setup</code></td>
+<td>消息网关配置</td>
+</tr>
+<tr>
+<td><code>hermes config list</code></td>
+<td>查看当前配置</td>
+</tr>
+<tr>
+<td><code>hermes schedule</code></td>
+<td>创建定时任务</td>
+</tr>
+<tr>
+<td><code>hermes dashboard</code></td>
+<td>打开仪表盘</td>
+</tr>
+</tbody></table>
+<h2 id="五、部署方案"><a href="#五、部署方案" class="headerlink" title="五、部署方案"></a>五、部署方案</h2><h3 id="5-1-本地部署"><a href="#5-1-本地部署" class="headerlink" title="5.1 本地部署"></a>5.1 本地部署</h3><p>执行一键安装命令即可，适用于 Linux&#x2F;macOS&#x2F;WSL2 环境。</p>
+<h3 id="5-2-Docker-部署"><a href="#5-2-Docker-部署" class="headerlink" title="5.2 Docker 部署"></a>5.2 Docker 部署</h3><p>通过 Docker Compose 部署，实现环境隔离：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3.8&quot;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">hermes:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nousresearch/hermes-agent:latest</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">hermes</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">unless-stopped</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">gateway</span> <span class="string">run</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./hermes-data:/opt/data</span></span><br></pre></td></tr></table></figure>
+
+<p>启动后进入容器完成初始配置。</p>
+<h3 id="5-3-云服务器部署"><a href="#5-3-云服务器部署" class="headerlink" title="5.3 云服务器部署"></a>5.3 云服务器部署</h3><ul>
+<li><strong>阿里云轻量应用服务器</strong>：选择 Hermes Agent 应用镜像，规格推荐 2 核 4G 以上</li>
+<li><strong>AWS EC2</strong>：支持 Amazon Linux 2023，需配置 IAM Role 调用 Bedrock 模型权限</li>
+<li><strong>阿里云计算巢</strong>：一键部署，自动完成资源编排和环境初始化</li>
+<li><strong>无影云电脑</strong>：预装 Hermes Agent，开箱即用</li>
+</ul>
+<h3 id="5-4-其他环境"><a href="#5-4-其他环境" class="headerlink" title="5.4 其他环境"></a>5.4 其他环境</h3><ul>
+<li><strong>QNAP NAS</strong>：通过 Container Station 使用 Docker Compose 部署</li>
+<li><strong>Android Termux</strong>：在 Termux 环境中运行一键安装命令</li>
+</ul>
+<h2 id="六、安全与故障排查"><a href="#六、安全与故障排查" class="headerlink" title="六、安全与故障排查"></a>六、安全与故障排查</h2><h3 id="6-1-安全建议"><a href="#6-1-安全建议" class="headerlink" title="6.1 安全建议"></a>6.1 安全建议</h3><ul>
+<li><strong>隔离运行</strong>：推荐使用 Docker 沙箱环境运行 Hermes Agent，将执行环境与宿主机隔离</li>
+<li><strong>访问控制</strong>：避免将服务端口直接暴露在公网，如需远程访问请使用 VPN 或 IP 白名单</li>
+<li><strong>凭证保护</strong>：妥善保管 API Key 和令牌，泄露后及时更换</li>
+<li><strong>技能来源</strong>：仅从可信来源安装扩展或技能</li>
+</ul>
+<h3 id="6-2-常见问题排查"><a href="#6-2-常见问题排查" class="headerlink" title="6.2 常见问题排查"></a>6.2 常见问题排查</h3><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安装失败</td>
+<td>检查网络连接，确保 Python 3.10+ 已安装</td>
+</tr>
+<tr>
+<td>模型调用失败</td>
+<td>验证 API Key 正确性，检查网络代理设置</td>
+</tr>
+<tr>
+<td>工具执行异常</td>
+<td>使用 <code>hermes tools</code> 检查工具状态</td>
+</tr>
+<tr>
+<td>配置文件丢失</td>
+<td>重新运行 <code>hermes setup</code> 初始化配置</td>
+</tr>
+</tbody></table>
+<h2 id="七、进阶与学习资源"><a href="#七、进阶与学习资源" class="headerlink" title="七、进阶与学习资源"></a>七、进阶与学习资源</h2><ul>
+<li><strong>官方文档</strong>：<a href="https://hermes-agent.nousresearch.com/docs/">https://hermes-agent.nousresearch.com/docs/</a></li>
+<li><strong>GitHub 仓库</strong>：<a href="https://github.com/NousResearch/hermes-agent">https://github.com/NousResearch/hermes-agent</a></li>
+<li><strong>技能系统</strong>：Hermes 的 Skill 遵循 agentskills.io 开放标准，支持社区共享和自动生成可复用技能</li>
+<li><strong>仪表盘</strong>：运行 <code>hermes dashboard</code> 可查看 Token 用量统计和中文界面</li>
+</ul>
+]]></content>
+      <categories>
+        <category>技术教程</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
+        <tag>Agent</tag>
+        <tag>工具</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用hexo搭建个人静态网站</title>
+    <url>/2026/05/05/2026-05-05-hexo-blog-setup-guide/</url>
+    <content><![CDATA[<p>本指南将帮助您从零开始搭建属于自己的技术博客。从环境准备到最终部署，每一步都有详细说明。</p>
+<h2 id="📝-准备：安装必要工具"><a href="#📝-准备：安装必要工具" class="headerlink" title="📝 准备：安装必要工具"></a>📝 准备：安装必要工具</h2><p>首先，在电脑上安装好 Node.js 和 Git。</p>
+<h3 id="1-安装并验证-Node-js"><a href="#1-安装并验证-Node-js" class="headerlink" title="1. 安装并验证 Node.js"></a>1. 安装并验证 Node.js</h3><p>从 <a href="https://nodejs.org/">Node.js 官网</a> 下载安装 LTS 版本。完成后，打开终端输入：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
+
+<p>看到类似 <code>v22.12.0</code> 和 <code>11.13.0</code> 的版本号就对了。</p>
+<h3 id="2-配置-npm-镜像"><a href="#2-配置-npm-镜像" class="headerlink" title="2. 配置 npm 镜像"></a>2. 配置 npm 镜像</h3><p>为了加速下载，可以设置淘宝镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmmirror.com</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-安装并验证-Git"><a href="#3-安装并验证-Git" class="headerlink" title="3. 安装并验证 Git"></a>3. 安装并验证 Git</h3><p>访问 <a href="https://git-scm.com/">Git 官网</a> 下载安装。完成后在终端输入：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>
+
+<p>如输出 <code>git version 2.39.3</code> 即成功。</p>
+<blockquote>
+<p>💡 <strong>小贴士</strong>：Node.js 是您的核心开发环境，npm（Node 包管理器）会随它自动安装好。Git 则是您与 GitHub 沟通的桥梁，负责代码的推送和拉取。</p>
+</blockquote>
+<hr>
+<h2 id="🚀-建站：初始化-Hexo-项目"><a href="#🚀-建站：初始化-Hexo-项目" class="headerlink" title="🚀 建站：初始化 Hexo 项目"></a>🚀 建站：初始化 Hexo 项目</h2><p>接着，我们正式创建网站的”骨架”。</p>
+<h3 id="1-安装-Hexo-CLI"><a href="#1-安装-Hexo-CLI" class="headerlink" title="1. 安装 Hexo CLI"></a>1. 安装 Hexo CLI</h3><p>在终端运行全局安装命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+
+<p>安装成功后，用 <code>hexo -v</code> 验证。</p>
+<h3 id="2-初始化您的网站"><a href="#2-初始化您的网站" class="headerlink" title="2. 初始化您的网站"></a>2. 初始化您的网站</h3><p>选择一个合适的文件夹（比如 <code>D:\MyBlog</code>），在终端中依次执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init test-dev-blog  <span class="comment"># 初始化项目</span></span><br><span class="line"><span class="built_in">cd</span> test-dev-blog        <span class="comment"># 进入项目目录</span></span><br><span class="line">npm install             <span class="comment"># 安装项目依赖</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-本地预览"><a href="#3-本地预览" class="headerlink" title="3. 本地预览"></a>3. 本地预览</h3><p>输入 <code>hexo server</code>（或简写 <code>hexo s</code>），打开浏览器访问 <a href="http://localhost:4000，您的第一个博客页面就跑起来了。">http://localhost:4000，您的第一个博客页面就跑起来了。</a></p>
+<hr>
+<h2 id="✍️-书写：发布您的第一篇文章"><a href="#✍️-书写：发布您的第一篇文章" class="headerlink" title="✍️ 书写：发布您的第一篇文章"></a>✍️ 书写：发布您的第一篇文章</h2><p>Hexo 用 Markdown 来写作，这很适合写技术文档和博客。</p>
+<h3 id="1-创建新文章"><a href="#1-创建新文章" class="headerlink" title="1. 创建新文章"></a>1. 创建新文章</h3><p>在博客根目录下运行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new <span class="string">&quot;我的第一篇博客&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-编辑文章内容"><a href="#2-编辑文章内容" class="headerlink" title="2. 编辑文章内容"></a>2. 编辑文章内容</h3><p>进入 <code>source/_posts</code> 目录，找到 <code>我的第一篇博客.md</code> 文件。用 VS Code 等编辑器打开。</p>
+<p>文件顶部是”Front-matter”区域，用来定义标题、日期等元数据，务必保留。您可以在 <code>---</code> 下方开始写正文。</p>
+<hr>
+<h2 id="🎨-装扮：更换主题并部署"><a href="#🎨-装扮：更换主题并部署" class="headerlink" title="🎨 装扮：更换主题并部署"></a>🎨 装扮：更换主题并部署</h2><h3 id="1-更换主题"><a href="#1-更换主题" class="headerlink" title="1. 更换主题"></a>1. 更换主题</h3><p>主题是网站的”皮肤”，您可以从 <a href="https://hexo.io/themes/">Hexo 官方主题站</a> 挑选。</p>
+<p>推荐主题：</p>
+<table>
+<thead>
+<tr>
+<th>主题</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Butterfly</strong></td>
+<td>功能丰富、优雅精致</td>
+<td>深度定制的技术博客</td>
+</tr>
+<tr>
+<td><strong>Matery</strong></td>
+<td>设计清新、功能现代</td>
+<td>作品集风格的个人站</td>
+</tr>
+<tr>
+<td><strong>Redefine</strong></td>
+<td>简洁、快速、纯粹</td>
+<td>让读者专注于内容</td>
+</tr>
+</tbody></table>
+<p>以安装 Butterfly 主题为例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在博客根目录下执行</span></span><br><span class="line">git <span class="built_in">clone</span> -b master https://github.com/jerryc127/hexo-theme-butterfly.git themes/butterfly</span><br><span class="line">npm install hexo-renderer-pug hexo-renderer-stylus --save</span><br></pre></td></tr></table></figure>
+
+<p>最后，修改站点配置文件 <code>_config.yml</code>，把 <code>theme: landscape</code> 改为 <code>theme: butterfly</code>，主题就生效了。</p>
+<h3 id="2-部署到-GitHub-Pages（免费托管）"><a href="#2-部署到-GitHub-Pages（免费托管）" class="headerlink" title="2. 部署到 GitHub Pages（免费托管）"></a>2. 部署到 GitHub Pages（免费托管）</h3><p><strong>第一步：创建 GitHub 仓库</strong></p>
+<ul>
+<li>登录 GitHub，新建一个仓库</li>
+<li>仓库名必须是 <code>您的用户名.github.io</code></li>
+<li><strong>关键</strong>：不要勾选 Initialize this repository with README</li>
+</ul>
+<p><strong>第二步：配置 Hexo 部署信息</strong></p>
+<p>打开博客根目录下的 <code>_config.yml</code> 文件，找到 <code># Deployment</code> 部分，填入您的 GitHub 仓库信息：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># _config.yml</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">https://github.com/您的用户名/您的用户名.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>第三步：一键部署</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save  <span class="comment"># 安装部署插件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cmd执行或powershell &gt;= 7.0</span></span><br><span class="line">hexo clean &amp;&amp; hexo generate &amp;&amp; hexo deploy</span><br><span class="line"></span><br><span class="line"><span class="comment"># PowerShell&lt;7.0 执行</span></span><br><span class="line">hexo clean; hexo generate; hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>现在，访问 <code>https://您的用户名.github.io</code> 就能看到您的网站了。</p>
+<p>以后每次更新网站，执行 <code>hexo clean &amp;&amp; hexo generate &amp;&amp; hexo deploy</code> 即可重新生成和发布。</p>
+<hr>
+<h2 id="🔌-进阶：常用插件推荐"><a href="#🔌-进阶：常用插件推荐" class="headerlink" title="🔌 进阶：常用插件推荐"></a>🔌 进阶：常用插件推荐</h2><table>
+<thead>
+<tr>
+<th>插件</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>hexo-generator-searchdb</code></td>
+<td>本地站内搜索插件，提升读者体验</td>
+</tr>
+<tr>
+<td><code>hexo-lazyload-image</code></td>
+<td>图片懒加载，提升页面加载速度</td>
+</tr>
+<tr>
+<td><code>hexo-offline</code></td>
+<td>开启 Service Worker，支持离线访问</td>
+</tr>
+<tr>
+<td><code>hexo-admonition</code></td>
+<td>在文章中插入漂亮的提示框（Note、Warning 等）</td>
+</tr>
+<tr>
+<td><code>hexo-gallery</code></td>
+<td>以优雅的瀑布流形式展示图片</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="💡-避坑指南"><a href="#💡-避坑指南" class="headerlink" title="💡 避坑指南"></a>💡 避坑指南</h2><h3 id="问题一：安装-hexo-cli-工具后，执行-hexo-报错"><a href="#问题一：安装-hexo-cli-工具后，执行-hexo-报错" class="headerlink" title="问题一：安装 hexo-cli 工具后，执行 hexo 报错"></a>问题一：安装 hexo-cli 工具后，执行 hexo 报错</h3><p><strong>解决方案：</strong></p>
+<ol>
+<li><p>找到 npm 全局安装路径，执行命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm config get prefix</span><br></pre></td></tr></table></figure>
+
+<p>它会输出一个路径，例如 <code>C:\Users\Administrator\AppData\Roaming\npm</code></p>
+</li>
+<li><p>把这个路径添加到系统环境变量：</p>
+<ul>
+<li>右键「此电脑」→「属性」→「高级系统设置」→「环境变量」</li>
+<li>在「系统变量」或「用户变量」中找到 <code>Path</code>，双击编辑</li>
+<li>点击「新建」，粘贴上面得到的路径</li>
+<li>确定保存后，重新打开命令行窗口，再试 <code>hexo</code> 命令</li>
+</ul>
+</li>
+</ol>
+<h3 id="问题二：安装主题报错-npm-error-Cannot-read-properties-of-null-reading-matches"><a href="#问题二：安装主题报错-npm-error-Cannot-read-properties-of-null-reading-matches" class="headerlink" title="问题二：安装主题报错 npm error Cannot read properties of null (reading &#39;matches&#39;)"></a>问题二：安装主题报错 <code>npm error Cannot read properties of null (reading &#39;matches&#39;)</code></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 错误信息</span></span><br><span class="line">npm error Cannot <span class="built_in">read</span> properties of null (reading <span class="string">&#x27;matches&#x27;</span>)</span><br><span class="line">npm error A complete <span class="built_in">log</span> of this run can be found <span class="keyword">in</span>: D:\nodejs\global\_logs\2026-05-05T03_57_22_121Z-debug-0.log</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决方案：使用 yarn 替代 npm</strong></p>
+<p>如果 npm 始终有诡异错误，可以换成更稳定的 yarn：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装 yarn</span></span><br><span class="line">npm install -g yarn</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置淘宝镜像（可选）</span></span><br><span class="line">yarn config <span class="built_in">set</span> registry https://registry.npmmirror.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在项目目录下执行</span></span><br><span class="line">yarn add hexo-renderer-pug hexo-renderer-stylus</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>希望本指南能帮助您顺利完成 Hexo 博客的搭建！如有问题，欢迎留言交流。</p>
+]]></content>
+      <categories>
+        <category>技术教程</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+        <tag>博客</tag>
+        <tag>建站教程</tag>
+      </tags>
+  </entry>
+</search>
