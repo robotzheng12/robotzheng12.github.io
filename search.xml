@@ -157,74 +157,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Trae AI 命令白名单配置指南</title>
-    <url>/2026/05/08/2026-05-08-trae-ai-whitelist-guide/</url>
-    <content><![CDATA[<p>Trae AI 的命令白名单可以通过设置界面或修改配置文件进行修改。Trae AI 提供了两种主要的配置方式：一种是通过 IDE 内的图形化界面，这种方式比较直观；另一种是直接编辑本地的配置文件，适合喜欢命令行操作或进行批量配置的场景。</p>
-<h2 id="方案一：通过-IDE-设置界面修改（推荐）"><a href="#方案一：通过-IDE-设置界面修改（推荐）" class="headerlink" title="方案一：通过 IDE 设置界面修改（推荐）"></a>方案一：通过 IDE 设置界面修改（推荐）</h2><p>这是最常用且便捷的修改方式。</p>
-<h3 id="1-进入设置"><a href="#1-进入设置" class="headerlink" title="1. 进入设置"></a>1. 进入设置</h3><p>打开 Trae IDE，点击界面右上角的<strong>设置</strong>图标，然后选择「对话流」部分。</p>
-<h3 id="2-定位命令运行模式"><a href="#2-定位命令运行模式" class="headerlink" title="2. 定位命令运行模式"></a>2. 定位命令运行模式</h3><p>在”对话流”设置中，你会看到一个名为「自动运行命令」或「命令运行方式」的区域。你需要将模式从”始终手动运行”（默认）切换为<strong>「使用白名单」</strong>。</p>
-<h3 id="3-编辑白名单列表"><a href="#3-编辑白名单列表" class="headerlink" title="3. 编辑白名单列表"></a>3. 编辑白名单列表</h3><p>模式切换后，下方会出现一个名为「白名单作用于 IDE」的输入框。在这里，你可以按需<strong>添加、编辑或删除命令前缀</strong>。</p>
-<h3 id="4-白名单匹配规则"><a href="#4-白名单匹配规则" class="headerlink" title="4. 白名单匹配规则"></a>4. 白名单匹配规则</h3><p>当 Trae AI 执行命令时，只要命令的开头部分与你列表中的<strong>任意一个命令前缀</strong>匹配，该命令就会被自动执行，无需二次确认。例如，添加了 <code>npm run</code>，那么 <code>npm run dev</code> 和 <code>npm run build</code> 都会自动运行。</p>
-<p><img src="/images/command-whitelist-config.png" alt="command-whitelist-config"></p>
-<h2 id="方案二：通过配置文件修改"><a href="#方案二：通过配置文件修改" class="headerlink" title="方案二：通过配置文件修改"></a>方案二：通过配置文件修改</h2><p>此方式适合期望将配置纳入版本控制或进行自动化管理的开发者。</p>
-<h3 id="1-定位配置文件"><a href="#1-定位配置文件" class="headerlink" title="1. 定位配置文件"></a>1. 定位配置文件</h3><p>Trae 的配置主要位于<strong>项目级</strong>和<strong>用户级</strong>两个目录中：</p>
-<table>
-<thead>
-<tr>
-<th>配置级别</th>
-<th>文件路径</th>
-<th>适用场景</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>项目级</strong>（推荐）</td>
-<td>项目根目录 <code>.trae/settings.json</code></td>
-<td>团队共享，建议提交到 Git</td>
-</tr>
-<tr>
-<td><strong>用户级</strong></td>
-<td><code>~/.trae/settings.json</code></td>
-<td>个人全局偏好设置</td>
-</tr>
-</tbody></table>
-<h3 id="2-编辑配置文件"><a href="#2-编辑配置文件" class="headerlink" title="2. 编辑配置文件"></a>2. 编辑配置文件</h3><p>用代码编辑器打开 <code>settings.json</code>，找到与”自动运行命令”和白名单相关的字段进行修改。如果字段不存在，可按以下格式手动添加：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;autoRunMode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;whitelist&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;whitelistedCommands&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;npm run&quot;</span><span class="punctuation">,</span> <span class="string">&quot;git pull&quot;</span><span class="punctuation">,</span> <span class="string">&quot;python&quot;</span><span class="punctuation">,</span> <span class="string">&quot;ls&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>各字段说明：</p>
-<ul>
-<li><code>autoRunMode</code>：设置为 <code>&quot;whitelist&quot;</code>，启用白名单模式</li>
-<li><code>whitelistedCommands</code>：数组类型，用于存放命令前缀字符串</li>
-</ul>
-<h2 id="补充说明"><a href="#补充说明" class="headerlink" title="补充说明"></a>补充说明</h2><h3 id="安全意识"><a href="#安全意识" class="headerlink" title="安全意识"></a>安全意识</h3><p>白名单方便，但也降低了安全门槛。添加前请再三确认该命令或脚本是安全可信的，<strong>建议只添加那些你非常信任且操作行为确定的命令</strong>。</p>
-<h3 id="所有命令自动运行"><a href="#所有命令自动运行" class="headerlink" title="所有命令自动运行"></a>所有命令自动运行</h3><p>Trae 也提供了一个”始终自动运行”模式，但这会完全禁用安全检查，<strong>出于安全考虑，在任何情况下都不建议轻易开启</strong>。</p>
-<h3 id="规则文件的区别"><a href="#规则文件的区别" class="headerlink" title="规则文件的区别"></a>规则文件的区别</h3><table>
-<thead>
-<tr>
-<th>文件</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>.trae/settings.json</code></td>
-<td>管理 AI 的运行时行为设置（如命令权限）</td>
-</tr>
-<tr>
-<td><code>user_rules.md</code> 等规则文件</td>
-<td>定义 AI 在生成代码时遵循的规范</td>
-</tr>
-</tbody></table>
-<p>它们是两个完全不同的配置体系，切勿混淆。</p>
-]]></content>
-      <categories>
-        <category>技术教程</category>
-      </categories>
-      <tags>
-        <tag>AI</tag>
-        <tag>Trae</tag>
-        <tag>效率工具</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>用hexo搭建个人静态网站</title>
     <url>/2026/05/05/2026-05-05-hexo-blog-setup-guide/</url>
     <content><![CDATA[<p>本指南将帮助您从零开始搭建属于自己的技术博客。从环境准备到最终部署，每一步都有详细说明。</p>
@@ -367,6 +299,409 @@
         <tag>Hexo</tag>
         <tag>博客</tag>
         <tag>建站教程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ADB 工具完整指南 - Android 调试必备技能</title>
+    <url>/2026/05/10/2026-05-10-adb-tool-guide/</url>
+    <content><![CDATA[<p>ADB（Android Debug Bridge）是 Android 开发中不可或缺的调试工具，本文提供完整的下载安装指南和常用调试命令，帮助开发者快速掌握 Android 日志抓取技能。</p>
+<h2 id="一、下载地址"><a href="#一、下载地址" class="headerlink" title="一、下载地址"></a>一、下载地址</h2><h3 id="1-Google-官方地址"><a href="#1-Google-官方地址" class="headerlink" title="1. Google 官方地址"></a>1. Google 官方地址</h3><table>
+<thead>
+<tr>
+<th>平台</th>
+<th>下载链接</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Windows</td>
+<td><a href="https://dl.google.com/android/repository/platform-tools-latest-windows.zip">platform-tools-latest-windows.zip</a></td>
+</tr>
+<tr>
+<td>macOS</td>
+<td><a href="https://dl.google.com/android/repository/platform-tools-latest-darwin.zip">platform-tools-latest-darwin.zip</a></td>
+</tr>
+<tr>
+<td>Linux</td>
+<td><a href="https://dl.google.com/android/repository/platform-tools-latest-linux.zip">platform-tools-latest-linux.zip</a></td>
+</tr>
+</tbody></table>
+<h3 id="2-清华大学镜像（国内高速）"><a href="#2-清华大学镜像（国内高速）" class="headerlink" title="2. 清华大学镜像（国内高速）"></a>2. 清华大学镜像（国内高速）</h3><p>下载地址：<code>https://mirrors.tuna.tsinghua.edu.cn/android-repository/</code></p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>直链</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Windows</td>
+<td><a href="https://mirrors.tuna.tsinghua.edu.cn/android-repository/platform-tools-latest-windows.zip">platform-tools-latest-windows.zip</a></td>
+</tr>
+<tr>
+<td>macOS</td>
+<td><a href="https://mirrors.tuna.tsinghua.edu.cn/android-repository/platform-tools-latest-darwin.zip">platform-tools-latest-darwin.zip</a></td>
+</tr>
+<tr>
+<td>Linux</td>
+<td><a href="https://mirrors.tuna.tsinghua.edu.cn/android-repository/platform-tools-latest-linux.zip">platform-tools-latest-linux.zip</a></td>
+</tr>
+</tbody></table>
+<h3 id="3-中科院镜像（稳定）"><a href="#3-中科院镜像（稳定）" class="headerlink" title="3. 中科院镜像（稳定）"></a>3. 中科院镜像（稳定）</h3><p><code>http://mirrors.opencas.ac.cn/android/repository/</code></p>
+<h3 id="4-国内备用（Gitee-备份）"><a href="#4-国内备用（Gitee-备份）" class="headerlink" title="4. 国内备用（Gitee 备份）"></a>4. 国内备用（Gitee 备份）</h3><ul>
+<li><a href="https://gitee.com/awake558/platform-tools">awake558&#x2F;platform-tools</a></li>
+<li><a href="https://gitee.com/David-EmDevTools/Android-SDK-platform-tools">David-EmDevTools&#x2F;Android-SDK-platform-tools</a></li>
+</ul>
+<hr>
+<h2 id="二、安装与连接调试"><a href="#二、安装与连接调试" class="headerlink" title="二、安装与连接调试"></a>二、安装与连接调试</h2><h3 id="2-1-安装步骤"><a href="#2-1-安装步骤" class="headerlink" title="2.1 安装步骤"></a>2.1 安装步骤</h3><ol>
+<li><strong>解压安装</strong>：建议解压到根目录，如 <code>D:\android-platform-tools</code></li>
+<li><strong>添加环境变量</strong>：将 <code>platform-tools</code> 目录添加到系统 PATH</li>
+<li><strong>验证安装</strong>：执行以下命令检查</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adb version</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-手机开启-USB-调试模式"><a href="#2-2-手机开启-USB-调试模式" class="headerlink" title="2.2 手机开启 USB 调试模式"></a>2.2 手机开启 USB 调试模式</h3><ol>
+<li>进入「设置」→「关于手机」，连续点击「版本号」7 次，直到出现”您现在处于开发者模式”的提示</li>
+<li>返回「设置」→「开发者选项」，开启「USB 调试」</li>
+<li>使用 USB 数据线连接手机与电脑</li>
+<li>手机上会弹出”允许 USB 调试吗？”的授权框，点击「确定」</li>
+</ol>
+<h3 id="2-3-验证连接"><a href="#2-3-验证连接" class="headerlink" title="2.3 验证连接"></a>2.3 验证连接</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adb devices</span><br></pre></td></tr></table></figure>
+
+<p>若看到设备列表中显示 <code>device</code> 状态，则连接成功。</p>
+<hr>
+<h2 id="三、应用场景"><a href="#三、应用场景" class="headerlink" title="三、应用场景"></a>三、应用场景</h2><h3 id="3-1-日志抓取"><a href="#3-1-日志抓取" class="headerlink" title="3.1 日志抓取"></a>3.1 日志抓取</h3><h4 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 开始抓取日志</span></span><br><span class="line">adb logcat</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清除旧日志信息</span></span><br><span class="line">adb logcat -c</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实时抓取并保存到 log.txt（按 Ctrl+C 停止）</span></span><br><span class="line">adb logcat -v <span class="keyword">time</span> &gt; log.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导出当前缓冲区日志（不实时抓取）</span></span><br><span class="line">adb logcat -d &gt; logcat_output.txt</span><br></pre></td></tr></table></figure>
+
+<h4 id="按日志级别过滤"><a href="#按日志级别过滤" class="headerlink" title="按日志级别过滤"></a>按日志级别过滤</h4><p>快速定位严重问题：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 只看错误级别及以上的日志（最常用）</span></span><br><span class="line">adb logcat *:E</span><br><span class="line"></span><br><span class="line"><span class="comment"># 同时结合保存文件，并附上时间戳</span></span><br><span class="line">adb logcat -v <span class="keyword">time</span> *:E &gt; crash_log.txt</span><br></pre></td></tr></table></figure>
+
+<h4 id="按应用过滤"><a href="#按应用过滤" class="headerlink" title="按应用过滤"></a>按应用过滤</h4><p>只关心自己的目标应用：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 方法1：通过进程 PID（优先推荐）</span></span><br><span class="line"><span class="comment"># 获取进程 PID 值</span></span><br><span class="line">adb shell ps | findstr com.your.app.package</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用获取到的 PID 进行过滤</span></span><br><span class="line">adb logcat --pid=&lt;PID&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2：通过包名（使用 grep 命令）</span></span><br><span class="line">adb logcat | grep <span class="string">&quot;com.your.app.package&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="手机应用包名查看"><a href="#手机应用包名查看" class="headerlink" title="手机应用包名查看"></a>手机应用包名查看</h4><ol>
+<li>打开「设置」→「应用设置」→「应用管理」</li>
+<li>搜索你要查的 App（如”微信”）</li>
+<li>进入「应用信息」→「更多」→「应用详情」</li>
+<li>最下方就能看到：包名：<code>com.xxx.xxx</code></li>
+</ol>
+<h4 id="按标签（Tag）过滤"><a href="#按标签（Tag）过滤" class="headerlink" title="按标签（Tag）过滤"></a>按标签（Tag）过滤</h4><p>精确追踪某个模块：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看指定标签的日志</span></span><br><span class="line">adb logcat -s TAG_NAME</span><br><span class="line"></span><br><span class="line"><span class="comment"># 带级别过滤：查看 TAG_NAME 的 Info 及以上日志，同时屏蔽其他所有日志</span></span><br><span class="line">adb logcat -s TAG_NAME:I *:S</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看特定缓冲区"><a href="#查看特定缓冲区" class="headerlink" title="查看特定缓冲区"></a>查看特定缓冲区</h4><p>抓取崩溃、事件等专项日志：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 抓取应用崩溃日志（Android 7.0+）</span></span><br><span class="line">adb logcat -b crash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 抓取系统事件日志（如 Activity 生命周期）</span></span><br><span class="line">adb logcat -b events</span><br><span class="line"></span><br><span class="line"><span class="comment"># 抓取无线/电话相关日志</span></span><br><span class="line">adb logcat -b radio</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="快捷命令速查"><a href="#快捷命令速查" class="headerlink" title="快捷命令速查"></a>快捷命令速查</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>adb version</code></td>
+<td>查看 ADB 版本</td>
+</tr>
+<tr>
+<td><code>adb devices</code></td>
+<td>列出已连接设备</td>
+</tr>
+<tr>
+<td><code>adb shell</code></td>
+<td>进入设备 shell</td>
+</tr>
+<tr>
+<td><code>adb logcat -c</code></td>
+<td>清除日志缓存</td>
+</tr>
+<tr>
+<td><code>adb logcat *:E</code></td>
+<td>只显示错误级别日志</td>
+</tr>
+<tr>
+<td><code>adb logcat -b crash</code></td>
+<td>抓取崩溃日志</td>
+</tr>
+<tr>
+<td><code>adb logcat -d</code></td>
+<td>导出当前日志缓冲区</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="日志级别说明"><a href="#日志级别说明" class="headerlink" title="日志级别说明"></a>日志级别说明</h2><table>
+<thead>
+<tr>
+<th>级别</th>
+<th>缩写</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Verbose</td>
+<td>V</td>
+<td>详细日志</td>
+</tr>
+<tr>
+<td>Debug</td>
+<td>D</td>
+<td>调试信息</td>
+</tr>
+<tr>
+<td>Info</td>
+<td>I</td>
+<td>一般信息</td>
+</tr>
+<tr>
+<td>Warn</td>
+<td>W</td>
+<td>警告信息</td>
+</tr>
+<tr>
+<td>Error</td>
+<td>E</td>
+<td>错误信息</td>
+</tr>
+<tr>
+<td>Fatal</td>
+<td>F</td>
+<td>致命错误</td>
+</tr>
+<tr>
+<td>Silent</td>
+<td>S</td>
+<td>静默（屏蔽所有输出）</td>
+</tr>
+</tbody></table>
+<hr>
+<p>掌握以上 ADB 使用技巧，可以让 Android 应用调试事半功倍。如有更多问题，欢迎交流讨论。</p>
+]]></content>
+      <categories>
+        <category>技术教程</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>ADB</tag>
+        <tag>调试工具</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Trae AI 命令白名单配置指南</title>
+    <url>/2026/05/08/2026-05-08-trae-ai-whitelist-guide/</url>
+    <content><![CDATA[<p>Trae AI 的命令白名单可以通过设置界面或修改配置文件进行修改。Trae AI 提供了两种主要的配置方式：一种是通过 IDE 内的图形化界面，这种方式比较直观；另一种是直接编辑本地的配置文件，适合喜欢命令行操作或进行批量配置的场景。</p>
+<h2 id="方案一：通过-IDE-设置界面修改（推荐）"><a href="#方案一：通过-IDE-设置界面修改（推荐）" class="headerlink" title="方案一：通过 IDE 设置界面修改（推荐）"></a>方案一：通过 IDE 设置界面修改（推荐）</h2><p>这是最常用且便捷的修改方式。</p>
+<h3 id="1-进入设置"><a href="#1-进入设置" class="headerlink" title="1. 进入设置"></a>1. 进入设置</h3><p>打开 Trae IDE，点击界面右上角的<strong>设置</strong>图标，然后选择「对话流」部分。</p>
+<h3 id="2-定位命令运行模式"><a href="#2-定位命令运行模式" class="headerlink" title="2. 定位命令运行模式"></a>2. 定位命令运行模式</h3><p>在”对话流”设置中，你会看到一个名为「自动运行命令」或「命令运行方式」的区域。你需要将模式从”始终手动运行”（默认）切换为<strong>「使用白名单」</strong>。</p>
+<h3 id="3-编辑白名单列表"><a href="#3-编辑白名单列表" class="headerlink" title="3. 编辑白名单列表"></a>3. 编辑白名单列表</h3><p>模式切换后，下方会出现一个名为「白名单作用于 IDE」的输入框。在这里，你可以按需<strong>添加、编辑或删除命令前缀</strong>。</p>
+<h3 id="4-白名单匹配规则"><a href="#4-白名单匹配规则" class="headerlink" title="4. 白名单匹配规则"></a>4. 白名单匹配规则</h3><p>当 Trae AI 执行命令时，只要命令的开头部分与你列表中的<strong>任意一个命令前缀</strong>匹配，该命令就会被自动执行，无需二次确认。例如，添加了 <code>npm run</code>，那么 <code>npm run dev</code> 和 <code>npm run build</code> 都会自动运行。</p>
+<p><img src="/images/command-whitelist-config.png" alt="command-whitelist-config"></p>
+<h2 id="方案二：通过配置文件修改"><a href="#方案二：通过配置文件修改" class="headerlink" title="方案二：通过配置文件修改"></a>方案二：通过配置文件修改</h2><p>此方式适合期望将配置纳入版本控制或进行自动化管理的开发者。</p>
+<h3 id="1-定位配置文件"><a href="#1-定位配置文件" class="headerlink" title="1. 定位配置文件"></a>1. 定位配置文件</h3><p>Trae 的配置主要位于<strong>项目级</strong>和<strong>用户级</strong>两个目录中：</p>
+<table>
+<thead>
+<tr>
+<th>配置级别</th>
+<th>文件路径</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>项目级</strong>（推荐）</td>
+<td>项目根目录 <code>.trae/settings.json</code></td>
+<td>团队共享，建议提交到 Git</td>
+</tr>
+<tr>
+<td><strong>用户级</strong></td>
+<td><code>~/.trae/settings.json</code></td>
+<td>个人全局偏好设置</td>
+</tr>
+</tbody></table>
+<h3 id="2-编辑配置文件"><a href="#2-编辑配置文件" class="headerlink" title="2. 编辑配置文件"></a>2. 编辑配置文件</h3><p>用代码编辑器打开 <code>settings.json</code>，找到与”自动运行命令”和白名单相关的字段进行修改。如果字段不存在，可按以下格式手动添加：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;autoRunMode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;whitelist&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;whitelistedCommands&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;npm run&quot;</span><span class="punctuation">,</span> <span class="string">&quot;git pull&quot;</span><span class="punctuation">,</span> <span class="string">&quot;python&quot;</span><span class="punctuation">,</span> <span class="string">&quot;ls&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>各字段说明：</p>
+<ul>
+<li><code>autoRunMode</code>：设置为 <code>&quot;whitelist&quot;</code>，启用白名单模式</li>
+<li><code>whitelistedCommands</code>：数组类型，用于存放命令前缀字符串</li>
+</ul>
+<h2 id="补充说明"><a href="#补充说明" class="headerlink" title="补充说明"></a>补充说明</h2><h3 id="安全意识"><a href="#安全意识" class="headerlink" title="安全意识"></a>安全意识</h3><p>白名单方便，但也降低了安全门槛。添加前请再三确认该命令或脚本是安全可信的，<strong>建议只添加那些你非常信任且操作行为确定的命令</strong>。</p>
+<h3 id="所有命令自动运行"><a href="#所有命令自动运行" class="headerlink" title="所有命令自动运行"></a>所有命令自动运行</h3><p>Trae 也提供了一个”始终自动运行”模式，但这会完全禁用安全检查，<strong>出于安全考虑，在任何情况下都不建议轻易开启</strong>。</p>
+<h3 id="规则文件的区别"><a href="#规则文件的区别" class="headerlink" title="规则文件的区别"></a>规则文件的区别</h3><table>
+<thead>
+<tr>
+<th>文件</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>.trae/settings.json</code></td>
+<td>管理 AI 的运行时行为设置（如命令权限）</td>
+</tr>
+<tr>
+<td><code>user_rules.md</code> 等规则文件</td>
+<td>定义 AI 在生成代码时遵循的规范</td>
+</tr>
+</tbody></table>
+<p>它们是两个完全不同的配置体系，切勿混淆。</p>
+]]></content>
+      <categories>
+        <category>技术教程</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
+        <tag>Trae</tag>
+        <tag>效率工具</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HDC 工具使用指南 - HarmonyOS 应用调试必备</title>
+    <url>/2026/05/10/2026-05-10-hdc-tool-guide/</url>
+    <content><![CDATA[<p>HDC（HarmonyOS Device Connector）是华为官方提供的调试工具，用于与 HarmonyOS 设备进行通信和日志抓取。本文详细介绍 HDC 工具的使用方法，帮助开发者快速掌握应用调试技能。</p>
+<h2 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h2><h3 id="1-1-获取-HDC-工具"><a href="#1-1-获取-HDC-工具" class="headerlink" title="1.1 获取 HDC 工具"></a>1.1 获取 HDC 工具</h3><h4 id="方式一：通过-DevEco-Studio（推荐）"><a href="#方式一：通过-DevEco-Studio（推荐）" class="headerlink" title="方式一：通过 DevEco Studio（推荐）"></a>方式一：通过 DevEco Studio（推荐）</h4><p>HDC 工具随 DevEco Studio 安装，路径如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;DevEco Studio 安装目录&#125;\sdk\default\openharmony\toolchains\</span><br></pre></td></tr></table></figure>
+
+<h4 id="方式二：通过-Command-Line-Tools"><a href="#方式二：通过-Command-Line-Tools" class="headerlink" title="方式二：通过 Command Line Tools"></a>方式二：通过 Command Line Tools</h4><ol>
+<li><p><strong>下载工具包</strong>：访问华为开发者官网下载页面：<a href="https://developer.huawei.com/consumer/cn/download/">HarmonyOS 下载中心</a>，找到 Command Line Tools for HarmonyOS，下载 Windows 版本。</p>
+</li>
+<li><p><strong>解压定位</strong>：找到 hdc.exe 文件位置：</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;解压目录&#125;\command-line-tools\sdk\default\openharmony\toolchains\</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-配置环境变量"><a href="#1-2-配置环境变量" class="headerlink" title="1.2 配置环境变量"></a>1.2 配置环境变量</h3><p>为了方便使用，建议将 HDC 所在的目录路径添加到系统的 PATH 环境变量中。完成后，可以在命令行终端中输入以下命令测试是否配置成功：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hdc -v</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-连接设备"><a href="#1-3-连接设备" class="headerlink" title="1.3 连接设备"></a>1.3 连接设备</h3><p>使用 USB 数据线将设备连接至电脑，在设备上开启开发者模式并授权 USB 调试。</p>
+<p><strong>可选：无线调试</strong></p>
+<ol>
+<li>在设备开发者选项中开启「无线调试」</li>
+<li>记录显示的 IP 地址和端口号</li>
+<li>在命令行执行：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hdc tconn 192.168.x.x:5555   <span class="comment"># 替换为设备 IP 和端口</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="2-抓取日志常用命令"><a href="#2-抓取日志常用命令" class="headerlink" title="2. 抓取日志常用命令"></a>2. 抓取日志常用命令</h2><h3 id="2-1-配置-HDC-工具"><a href="#2-1-配置-HDC-工具" class="headerlink" title="2.1 配置 HDC 工具"></a>2.1 配置 HDC 工具</h3><p>首次使用时，可能需要在设备上执行以下命令开启日志权限：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 授予 HDC 调试权限</span></span><br><span class="line">hdc shell</span><br><span class="line"><span class="comment"># 然后在设备 shell 中执行</span></span><br><span class="line">hilogrd</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-基础日志命令"><a href="#2-2-基础日志命令" class="headerlink" title="2.2 基础日志命令"></a>2.2 基础日志命令</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 实时查看应用日志（按包名过滤）</span></span><br><span class="line">hdc shell <span class="string">&quot;hilog -r | grep com.example.your_app&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看最近日志</span></span><br><span class="line">hdc shell <span class="string">&quot;hilog -r&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看指定级别日志</span></span><br><span class="line">hdc shell <span class="string">&quot;hilog -r | grep -E &#x27;^[A-Z] .*&#x27;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 清除日志缓存</span></span><br><span class="line">hdc shell <span class="string">&quot;hilog -w clear&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-日志级别说明"><a href="#2-3-日志级别说明" class="headerlink" title="2.3 日志级别说明"></a>2.3 日志级别说明</h3><table>
+<thead>
+<tr>
+<th>级别</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>D</td>
+<td>Debug - 调试信息</td>
+</tr>
+<tr>
+<td>I</td>
+<td>Info - 一般信息</td>
+</tr>
+<tr>
+<td>W</td>
+<td>Warn - 警告信息</td>
+</tr>
+<tr>
+<td>E</td>
+<td>Error - 错误信息</td>
+</tr>
+<tr>
+<td>F</td>
+<td>Fatal - 致命错误</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="3-常见问题与高级用法"><a href="#3-常见问题与高级用法" class="headerlink" title="3. 常见问题与高级用法"></a>3. 常见问题与高级用法</h2><h3 id="3-1-如何查看应用的进程-ID？"><a href="#3-1-如何查看应用的进程-ID？" class="headerlink" title="3.1 如何查看应用的进程 ID？"></a>3.1 如何查看应用的进程 ID？</h3><p><strong>方法一：在设备上通过命令行查找</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hdc shell</span><br><span class="line">ps -ef | grep com.example.your_app</span><br></pre></td></tr></table></figure>
+
+<p><strong>方法二：获取应用包名</strong></p>
+<table>
+<thead>
+<tr>
+<th>途径</th>
+<th>操作步骤</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>手机直接查看</td>
+<td>设置 → 应用和服务 → 应用管理 → 找到目标应用 → 应用信息（包名在页面底部）</td>
+</tr>
+<tr>
+<td>日志中查找</td>
+<td>抓取实时日志，日志中一般能找到包名及进程号</td>
+</tr>
+</tbody></table>
+<h3 id="3-2-看不到应用日志？"><a href="#3-2-看不到应用日志？" class="headerlink" title="3.2 看不到应用日志？"></a>3.2 看不到应用日志？</h3><p>可能原因及解决方案：</p>
+<ol>
+<li><strong>检查代码调用</strong>：确认代码中是否正确调用了 <code>hilog</code> 接口</li>
+<li><strong>检查连接授权</strong>：确保 HDC 连接正常，设备已授权调试</li>
+<li><strong>系统隔离限制</strong>：某些应用（如”卓易通”）因系统隔离，其日志可能无法被 <code>hilog</code> 捕获</li>
+</ol>
+<h3 id="3-3-hilog-命令的日志级别受限"><a href="#3-3-hilog-命令的日志级别受限" class="headerlink" title="3.3 hilog 命令的日志级别受限"></a>3.3 hilog 命令的日志级别受限</h3><p>有时会发现 <code>hilog</code> 输出只显示 I（Info）及以上级别日志，可尝试以下方式解决：</p>
+<p><strong>方法一：修改设备配置文件</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 导出配置文件</span></span><br><span class="line">hdc file recv /system/etc/param/hilog.para ./</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改文件内容</span></span><br><span class="line"><span class="comment"># 将 hilog.loggable.global=I 修改为 hilog.loggable.global=D</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送回设备</span></span><br><span class="line">hdc file send ./hilog.para /system/etc/param/</span><br></pre></td></tr></table></figure>
+
+<p><strong>方法二：重新编译系统源码</strong></p>
+<p>修改源码文件 <code>base/hiviewdfx/hilog/services/hilogd/etc/hilog.para</code> 中的对应配置，然后重新编译烧录。</p>
+<h3 id="3-4-更全面分析系统状态"><a href="#3-4-更全面分析系统状态" class="headerlink" title="3.4 更全面分析系统状态"></a>3.4 更全面分析系统状态</h3><p><code>hilog</code> 主要用于查看常规日志。如果遇到以下问题：</p>
+<ul>
+<li>应用无响应（ANR）</li>
+<li>内存泄漏</li>
+<li>系统异常</li>
+</ul>
+<p>建议使用以下命令获取完整报告：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 抓取完整故障报告</span></span><br><span class="line">hdc bugreport</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或导出到本地文件</span></span><br><span class="line">hdc bugreport &gt; crash.txt</span><br></pre></td></tr></table></figure>
+
+<p>这会生成一个包含系统快照、dump 文件等信息的完整报告包，有助于进行更深入地分析。</p>
+<hr>
+<h2 id="快捷命令速查"><a href="#快捷命令速查" class="headerlink" title="快捷命令速查"></a>快捷命令速查</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>hdc -v</code></td>
+<td>查看 HDC 版本</td>
+</tr>
+<tr>
+<td><code>hdc list targets</code></td>
+<td>列出已连接设备</td>
+</tr>
+<tr>
+<td><code>hdc shell</code></td>
+<td>进入设备 shell</td>
+</tr>
+<tr>
+<td><code>hdc file send &lt;local&gt; &lt;remote&gt;</code></td>
+<td>推送文件到设备</td>
+</tr>
+<tr>
+<td><code>hdc file recv &lt;remote&gt; &lt;local&gt;</code></td>
+<td>从设备拉取文件</td>
+</tr>
+<tr>
+<td><code>hdc bugreport</code></td>
+<td>生成完整故障报告</td>
+</tr>
+<tr>
+<td><code>hdc tconn &lt;ip:port&gt;</code></td>
+<td>无线连接设备</td>
+</tr>
+</tbody></table>
+<hr>
+<p>掌握以上 HDC 使用技巧，可以让 HarmonyOS 应用调试事半功倍。如有更多问题，欢迎交流讨论。</p>
+]]></content>
+      <categories>
+        <category>技术教程</category>
+      </categories>
+      <tags>
+        <tag>调试工具</tag>
+        <tag>HarmonyOS</tag>
+        <tag>HDC</tag>
       </tags>
   </entry>
 </search>
