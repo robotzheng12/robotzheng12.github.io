@@ -738,4 +738,80 @@
         <tag>ADB</tag>
       </tags>
   </entry>
+  <entry>
+    <title>通过后端接口认证绕过前端登录 - UI自动化Playwright 与 Selenium 实现</title>
+    <url>/2026/05/10/2026-05-10-api-auth-bypass-login/</url>
+    <content><![CDATA[<p>在自动化测试中，通过后端接口认证可以完全绕过前端登录 UI 和验证码，大大提升测试效率。本文详细介绍 Playwright 和 Selenium 两种框架的实现方式。</p>
+<hr>
+<h2 id="Playwright-框架实现"><a href="#Playwright-框架实现" class="headerlink" title="Playwright 框架实现"></a>Playwright 框架实现</h2><p>Playwright 官方对此有深度支持。</p>
+<h3 id="API-请求-共享-Cookie（高度集成）"><a href="#API-请求-共享-Cookie（高度集成）" class="headerlink" title="API 请求 + 共享 Cookie（高度集成）"></a>API 请求 + 共享 Cookie（高度集成）</h3><p>这是最推荐的方式。Playwright 的 BrowserContext 与 APIRequestContext 共享 Cookie 存储。登录请求返回的 Set-Cookie 头会自动同步给浏览器上下文。</p>
+<h4 id="Python-示例"><a href="#Python-示例" class="headerlink" title="Python 示例"></a>Python 示例</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> playwright.sync_api <span class="keyword">import</span> sync_playwright</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_api_login</span>():</span><br><span class="line">    <span class="keyword">with</span> sync_playwright() <span class="keyword">as</span> p:</span><br><span class="line">        browser = p.chromium.launch()</span><br><span class="line">        context = browser.new_context()</span><br><span class="line">        page = context.new_page()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 通过 context.request 发送登录请求，返回的 Set-Cookie 自动同步到浏览器</span></span><br><span class="line">        response = context.request.post(</span><br><span class="line">            <span class="string">&quot;https://example.com/api/login&quot;</span>,</span><br><span class="line">            data=&#123;<span class="string">&quot;username&quot;</span>: <span class="string">&quot;testuser&quot;</span>, <span class="string">&quot;password&quot;</span>: <span class="string">&quot;pass123&quot;</span>&#125;</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">assert</span> response.ok</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 此时浏览器已处于登录状态，直接访问受保护页面即可</span></span><br><span class="line">        page.goto(<span class="string">&quot;https://example.com/dashboard&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 执行测试断言...</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="JavaScript-示例（Playwright-Test）"><a href="#JavaScript-示例（Playwright-Test）" class="headerlink" title="JavaScript 示例（Playwright Test）"></a>JavaScript 示例（Playwright Test）</h4><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; test, expect &#125; <span class="keyword">from</span> <span class="string">&#x27;@playwright/test&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> authToken;</span><br><span class="line"></span><br><span class="line">test.<span class="title function_">beforeAll</span>(<span class="title function_">async</span> (&#123; request &#125;) =&gt; &#123;</span><br><span class="line">  <span class="comment">// 调用登录 API 获取凭证</span></span><br><span class="line">  <span class="keyword">const</span> response = <span class="keyword">await</span> request.<span class="title function_">post</span>(<span class="string">&#x27;https://example.com/api/login&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">data</span>: &#123; <span class="attr">username</span>: <span class="string">&#x27;testuser&#x27;</span>, <span class="attr">password</span>: <span class="string">&#x27;pass123&#x27;</span> &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">const</span> data = <span class="keyword">await</span> response.<span class="title function_">json</span>();</span><br><span class="line">  authToken = data.<span class="property">token</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="title function_">test</span>(<span class="string">&#x27;使用 API 获取的 Token 进行测试&#x27;</span>, <span class="title function_">async</span> (&#123; page &#125;) =&gt; &#123;</span><br><span class="line">  <span class="comment">// 方案：通过 Cookie 携带 Token</span></span><br><span class="line">  <span class="keyword">await</span> page.<span class="title function_">goto</span>(<span class="string">&#x27;https://example.com&#x27;</span>);</span><br><span class="line">  <span class="keyword">await</span> page.<span class="title function_">evaluate</span>(<span class="function"><span class="params">token</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="property">cookie</span> = <span class="string">`auth_token=<span class="subst">$&#123;token&#125;</span>; path=/`</span>;</span><br><span class="line">  &#125;, authToken);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 或者通过 LocalStorage 注入</span></span><br><span class="line">  <span class="keyword">await</span> page.<span class="title function_">addInitScript</span>(<span class="function"><span class="params">token</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">window</span>.<span class="property">localStorage</span>.<span class="title function_">setItem</span>(<span class="string">&#x27;token&#x27;</span>, token);</span><br><span class="line">  &#125;, authToken);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">await</span> page.<span class="title function_">goto</span>(<span class="string">&#x27;https://example.com/dashboard&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 执行测试断言...</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意</strong>：使用 <code>context.request</code> 发起的请求会自动与浏览器共享 Cookie，这是 Playwright 独有的优势。如果不想共享 Cookie，则可以调用 <code>api_request.new_context()</code> 创建独立上下文。</p>
+</blockquote>
+<hr>
+<h2 id="Selenium-框架实现"><a href="#Selenium-框架实现" class="headerlink" title="Selenium 框架实现"></a>Selenium 框架实现</h2><p>Selenium 没有内置的 API 客户端，需要手动将认证凭证注入浏览器，主要有两种途径。</p>
+<h3 id="方法一：通过-Cookie-LocalStorage-注入"><a href="#方法一：通过-Cookie-LocalStorage-注入" class="headerlink" title="方法一：通过 Cookie &#x2F; LocalStorage 注入"></a>方法一：通过 Cookie &#x2F; LocalStorage 注入</h3><p>如果 Token 存储在 Cookie 或 LocalStorage 中，可以直接注入。</p>
+<h4 id="Python-示例-1"><a href="#Python-示例-1" class="headerlink" title="Python 示例"></a>Python 示例</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 调用后端登录 API 获取 Token（绕过了验证码）</span></span><br><span class="line">login_url = <span class="string">&quot;https://example.com/api/login&quot;</span></span><br><span class="line">response = requests.post(login_url, json=&#123;</span><br><span class="line">    <span class="string">&quot;username&quot;</span>: <span class="string">&quot;testuser&quot;</span>,</span><br><span class="line">    <span class="string">&quot;password&quot;</span>: <span class="string">&quot;pass123&quot;</span></span><br><span class="line">&#125;)</span><br><span class="line">token = response.json().get(<span class="string">&quot;token&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 启动浏览器并设置 Cookie</span></span><br><span class="line">driver = webdriver.Chrome()</span><br><span class="line">driver.get(<span class="string">&quot;https://example.com&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 必须先访问目标域名才能设置 Cookie</span></span><br><span class="line">driver.add_cookie(&#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;auth_token&quot;</span>,</span><br><span class="line">    <span class="string">&quot;value&quot;</span>: token,</span><br><span class="line">    <span class="string">&quot;domain&quot;</span>: <span class="string">&quot;example.com&quot;</span>,</span><br><span class="line">    <span class="string">&quot;path&quot;</span>: <span class="string">&quot;/&quot;</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 刷新页面，Cookie 生效</span></span><br><span class="line">driver.get(<span class="string">&quot;https://example.com/dashboard&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="LocalStorage-注入方式"><a href="#LocalStorage-注入方式" class="headerlink" title="LocalStorage 注入方式"></a>LocalStorage 注入方式</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 如果 Token 存储在 localStorage 中</span></span><br><span class="line">driver.get(<span class="string">&quot;https://example.com&quot;</span>)</span><br><span class="line">driver.execute_script(<span class="string">f&quot;window.localStorage.setItem(&#x27;token&#x27;, &#x27;<span class="subst">&#123;token&#125;</span>&#x27;);&quot;</span>)</span><br><span class="line">driver.get(<span class="string">&quot;https://example.com/dashboard&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法二：通过自定义请求头（不支持直接设置）"><a href="#方法二：通过自定义请求头（不支持直接设置）" class="headerlink" title="方法二：通过自定义请求头（不支持直接设置）"></a>方法二：通过自定义请求头（不支持直接设置）</h3><p>Selenium 本身无法直接为页面请求设置自定义 Header（如 Authorization: Bearer <token>）。一种解决方案是借助代理工具拦截并修改请求：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> browsermobproxy <span class="keyword">import</span> Server</span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">server = Server(<span class="string">&quot;path/to/browsermob-proxy&quot;</span>)</span><br><span class="line">server.start()</span><br><span class="line">proxy = server.create_proxy()</span><br><span class="line">proxy.add_header(<span class="string">&quot;Authorization&quot;</span>, <span class="string">f&quot;Bearer <span class="subst">&#123;token&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">chrome_options = webdriver.ChromeOptions()</span><br><span class="line">chrome_options.add_argument(<span class="string">f&quot;--proxy-server=<span class="subst">&#123;proxy.proxy&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">driver = webdriver.Chrome(options=chrome_options)</span><br><span class="line">driver.get(<span class="string">&quot;https://example.com/dashboard&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法三：通过-Chrome-DevTools-Protocol-CDP-设置请求头（进阶）"><a href="#方法三：通过-Chrome-DevTools-Protocol-CDP-设置请求头（进阶）" class="headerlink" title="方法三：通过 Chrome DevTools Protocol (CDP) 设置请求头（进阶）"></a>方法三：通过 Chrome DevTools Protocol (CDP) 设置请求头（进阶）</h3><p>这是相对现代且更干净的方式，绕过代理直接通过 CDP 设置请求头。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver = webdriver.Chrome()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启用必要的 CDP 会话</span></span><br><span class="line">driver.execute_cdp_cmd(<span class="string">&quot;Network.enable&quot;</span>, &#123;&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置请求头，所有后续请求都会自动携带 Authorization header</span></span><br><span class="line">driver.execute_cdp_cmd(<span class="string">&quot;Network.setExtraHTTPHeaders&quot;</span>, &#123;</span><br><span class="line">    <span class="string">&quot;headers&quot;</span>: &#123;<span class="string">&quot;Authorization&quot;</span>: <span class="string">f&quot;Bearer <span class="subst">&#123;token&#125;</span>&quot;</span>&#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 访问目标页面，Token 会自动附加到请求头中</span></span><br><span class="line">driver.get(<span class="string">&quot;https://example.com/dashboard&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这种方法直接通过 Chrome DevTools Protocol（CDP）拦截并修改网络请求，是目前 Selenium 中最灵活且最接近”原生”的做法。</p>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><table>
+<thead>
+<tr>
+<th>框架</th>
+<th>推荐方案</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Playwright</strong></td>
+<td><code>context.request</code> + <code>storageState</code> 组合</td>
+<td>首选的”丝滑”体验，强烈推荐</td>
+</tr>
+<tr>
+<td><strong>Playwright</strong></td>
+<td><code>page.route</code> 拦截并修改请求</td>
+<td>Token 放在 Header 中（如 JWT）</td>
+</tr>
+<tr>
+<td><strong>Selenium</strong></td>
+<td>Cookie &#x2F; LocalStorage 注入</td>
+<td>Token 存储在 Cookie 或 LocalStorage 中</td>
+</tr>
+<tr>
+<td><strong>Selenium</strong></td>
+<td>CDP 方法（<code>execute_cdp_cmd</code>）</td>
+<td>Token 放在 Header 中，推荐使用</td>
+</tr>
+<tr>
+<td><strong>Selenium</strong></td>
+<td>代理方案</td>
+<td>无法使用 CDP 时的备选方案</td>
+</tr>
+</tbody></table>
+<hr>
+<p>通过后端接口认证可以显著提升自动化测试的效率，避免重复的登录操作和验证码处理。根据项目使用的框架选择合适的实现方式，可以让测试更加稳定和高效。</p>
+]]></content>
+      <categories>
+        <category>技术教程</category>
+      </categories>
+      <tags>
+        <tag>自动化测试</tag>
+        <tag>Playwright</tag>
+        <tag>Selenium</tag>
+        <tag>认证</tag>
+      </tags>
+  </entry>
 </search>
